@@ -1,29 +1,45 @@
-PROJECT=blink
+PROJECT=blinker
+TARGET=main
 
 # Compiler options
 CC = avr-gcc
+LD = avr-ld
 MCU = atmega328p
-CFLAGS = -mmcu=$(MCU)
+CFLAGS = -I include -g -O3 -save-temps -mmcu=$(MCU)
 
 # Programmer options
 PROG_TOOL = usbasp
 PROG_DEVICE = m328p
 
-vpath %.c src
+# sources
+SRCDIR = src
+OBJDIR = obj
+BINDIR = bin
+SOURCES  := $(wildcard $(SRCDIR)/*.c)
+OBJS  := $(SOURCES:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
 
-all: $(PROJECT).hex
+.PHONY : all clean download
 
-%.hex: main.elf
-	avr-objcopy -j .text -j .data -O ihex $< $@
+all: $(TARGET).hex
 
-%.o: %.c
-	$(CC) $(CFLAGS) -c $< 
+$(OBJS): $(OBJDIR)/%.o: $(SRCDIR)/%.c | $(OBJDIR)
+	$(CC) $(CFLAGS) -c $< -o $@
 
-%.elf: %.o
-	$(CC) $(CFLAGS) -o $@ $<
+$(TARGET).elf: $(OBJS) | $(BINDIR)
+	$(LD) $(LFLAGS) $(OBJS) -o $(BINDIR)/$@
+
+$(TARGET).hex: $(TARGET).elf
+	avr-objcopy -j .text -j .data -O ihex $(BINDIR)/$< $(BINDIR)/$@
 
 download: all
-	avrdude -p $(PROG_DEVICE) -c $(PROG_TOOL) -U flash:w:$(PROJECT).hex 
+	avrdude -p $(PROG_DEVICE) -c $(PROG_TOOL) -U flash:w:$(BINDIR)/$(TARGET).hex
 
+$(OBJDIR):
+	mkdir $(OBJDIR)
+
+$(BINDIR):
+	mkdir $(BINDIR)
+
+.PHONY : clean
 clean:
-	rm -rf *.o  *.hex *.elf
+	rm -rf $(OBJDIR) $(BINDIR)
