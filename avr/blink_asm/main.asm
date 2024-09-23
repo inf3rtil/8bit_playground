@@ -4,14 +4,14 @@
 	.cseg
 	.org 0
 	ldi r20, 0x00
-	ldi r21, 0xFF
+	ldi r21, 0x20
+	out DDRB, r21
 	jmp main
 	
 main:
 	cli
 	ldi r24, 100
 	out PORTB, r20
-	out DDRB, r21
 	call delay
 	out PORTB, r21
 	ldi r24, 100
