@@ -3,16 +3,25 @@
 
 #include <QWidget>
 
-class waveArea : public QWidget
+#define DRAW_OFFSET 5
+
+class WaveArea : public QWidget
 {
     Q_OBJECT
-    QPoint lastPoint;
+    QPoint lastPoint = QPoint(0,0);
     QColor myPenColor = Qt::blue;
     QImage image;
-    bool scribbling = false;
+    bool scribbling = true;
     void drawLineTo(const QPoint &endPoint);
+    bool modified = false;
+    qreal myPenWidth = 4;
+    void resizeImage(QImage *image, const QSize &newSize);
+    //std::vector<QPoint> points;
 public:
-    explicit waveArea(QWidget *parent = nullptr);
+    explicit WaveArea(QWidget *parent = nullptr);
+    void clearWave(void);
+    void setResolutionH(unsigned int resolution);
+    std::array<int, 1024> points;
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;
