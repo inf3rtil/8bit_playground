@@ -38,7 +38,7 @@ enum serialCommand{
     START_WAVE,
     STORE_WAVE
 };
-/*
+
 unsigned char v0[30] = {
     129, 131, 134, 136, 138, 140, 142, 145, 147, 149,
     151, 153, 156, 158, 160, 162, 164, 166, 168, 170,
@@ -74,13 +74,15 @@ unsigned char v5[30] = {
     168, 166, 164, 162, 160, 158, 156, 153, 151, 149,
     147, 145, 142, 140, 138, 136, 134, 131, 129, 127
 };
- */
+
+/*
 unsigned char v0[30] = {0};
 unsigned char v1[30] = {0};
 unsigned char v2[30] = {0};
 unsigned char v3[30] = {0};
 unsigned char v4[30] = {0};
 unsigned char v5[30] = {0};
+ */
 unsigned char *data[6] = {v0, v1, v2, v3, v4, v5};
 
 unsigned char getValue(unsigned char pos)
@@ -205,6 +207,7 @@ void waitStart(unsigned char data){
     }
 }
 
+
 void main(void) {
     CMCON = 0x07;
     TRISA = 0x00;
@@ -225,19 +228,18 @@ void main(void) {
             value = getValue(x);
             PORTA = value;
             PORTB = value;
-            delay(10);
             //print(x);
         }
-        /*for(unsigned char x = 0; x < 180; x++ )
-        {
-            value = 255 - getValue(x);
-            PORTA = value;
-            PORTB = value;
-            delay(10);
+//        for(unsigned char x = 0; x < 180; x++ )
+       // {
+         //   value = 255 - getValue(x);
+           // PORTA = value;
+            //PORTB = value;
             //print(x);
-        }*/
+        //}
     }
 }
+
 
 void __interrupt() serial()
 {
