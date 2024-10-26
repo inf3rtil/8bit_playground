@@ -36,19 +36,20 @@ void Widget::on_pbClear_clicked()
 void Widget::on_pbSend_clicked()
 {
     QByteArray data;
-    serialPort->setPortName("/dev/ttyUSB0");
-    serialPort->setBaudRate(QSerialPort::Baud115200);
+    serialPort->setPortName("/dev/ttyACM0");
+    serialPort->setBaudRate(QSerialPort::Baud9600);
     serialPort->open(QIODevice::ReadWrite);
-    for(unsigned char x = 0; x < horizontalResolution; x++){
+    for(uint16_t x = 0; x < horizontalResolution; x++){
         data.clear();
-        data.append(x);
+        data.append((uint8_t)(x >> 8));
+        data.append((uint8_t)(x));
         data.append(255 - waveArea->points[x + DRAW_OFFSET]);
         serialPort->write("BS");
         serialPort->write(data);
         this->ui->serialLog->appendPlainText(QString("Send:") + QString::number(waveArea->points[x + DRAW_OFFSET]));
-        if(serialPort->waitForReadyRead(1000)){
+        if(serialPort->waitForReadyRead(300)){
             data = serialPort->readAll();
-            this->ui->serialLog->appendPlainText("Receive ACK!");
+            this->ui->serialLog->appendPlainText("Receive! ");
         }
         else{
             data.clear();
@@ -74,5 +75,22 @@ void Widget::setHresolution(unsigned int resolution)
 {
     this->horizontalResolution = resolution;
     waveArea->resize(resolution+DRAW_OFFSET,255);
+}
+
+
+void Widget::on_horizontalSlider_valueChanged(int value)
+{
+    QByteArray data;
+    data.append((uint8_t)(this->ui->horizontalSlider->value()));
+    serialPort->write("BT");
+    serialPort->write(data);
+    this->ui->serialLog->appendPlainText(QString("Send:") + QString::number(this->ui->horizontalSlider->value()));
+    if(serialPort->waitForReadyRead(300)){
+        data = serialPort->readAll();
+        this->ui->serialLog->appendPlainText("Receive! ");
+    }
+    else{
+        data.clear();
+    }
 }
 

@@ -31,11 +31,13 @@ private slots:
 
     void on_hResSpin_valueChanged(int arg1);
 
+    void on_horizontalSlider_valueChanged(int value);
+
 private:
     WaveArea *waveArea = nullptr;
     QSerialPort *serialPort = nullptr;
     Ui::Widget *ui;
     void setHresolution(unsigned int resolution);
-    unsigned int horizontalResolution = 255;
+    unsigned int horizontalResolution = 1024;
 };
 #endif // WIDGET_H

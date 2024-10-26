@@ -15,6 +15,6 @@ typedef struct{
 
 uint8_t configWaveTracer(const WaveConfig *cfg);
 uint8_t cmdWaveTracer(const uint8_t cmd);
-
+void updateWave(void);
 
 #endif

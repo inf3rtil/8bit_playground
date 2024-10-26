@@ -12,7 +12,9 @@ uint8_t buffer[1024];
 
 void initMcu(void)
 {
-    DDRB = 0xFF;
+    DDRB |= 0x0F;
+    DDRD |= 0xF0;
+    DDRC |= 1;
     SREG |= 0x80 ;
 }
     
@@ -53,7 +55,7 @@ int main(void)
     serialWrite((uint8_t*) hello, strlen(hello));
     while(1)
 	{
-	    ;
+	    updateWave();
 	}
 }
 
